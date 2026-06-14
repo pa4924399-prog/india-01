@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Do You Love Me?</title>
+    <style>
+        /* General Page Styling */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f4f8; /* Light neutral background initially */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; /* Prevents scrollbars when button moves */
+            transition: background-color 0.5s ease;
+        }
+
+        /* Container for the content */
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 30px;
+            transition: color 0.3s ease;
+        }
+
+        /* Button Styling */
+        .btn-group {
+            position: relative;
+        }
+
+        button {
+            font-size: 1.5rem;
+            padding: 10px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            font-weight: bold;
+        }
+
+        #yesBtn {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            background-color: #45a049;
+        }
+
+        #noBtn {
+            background-color: #ff4d4d;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative; /* Needed for the movement logic */
+        }
+
+        /* The 'Lovely' State Styling */
+        body.lovely {
+            background: linear-gradient(116.82deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        body.lovely h1 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-size: 4rem;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .heart {
+            position: absolute;
+            color: #fff;
+            animation: float 4s linear infinite;
+            font-size: 2rem;
+            opacity: 0;
+            top: 100%;
+        }
+
+        .big-heart {
+            font-size: 8rem;
+            display: block;
+            margin-top: 20px;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <h1 id="questionText">Do you love me?</h1>
+        <div class="btn-group">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const questionText = document.getElementById('questionText');
+        const body = document.body;
+        const btnGroup = document.querySelector('.btn-group');
+
+        // Logic for the "No" button (The Prank)
+        const moveButton = () => {
+            // Get window dimensions
+            const maxWidth = window.innerWidth - noBtn.offsetWidth;
+            const maxHeight = window.innerHeight - noBtn.offsetHeight;
+
+            // Calculate random positions
+            const randomX = Math.floor(Math.random() * maxWidth);
+            const randomY = Math.floor(Math.random() * maxHeight);
+
+            // Apply new position
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        };
+
+        // Trigger movement on Hover (Desktop) and Click/Touch (Mobile)
+        noBtn.addEventListener('mouseover', moveButton);
+        noBtn.addEventListener('click', moveButton); // Fallback for mobile users
+
+        // Logic for the "Yes" button (The Reward)
+        yesBtn.addEventListener('click', () => {
+            // 1. Change Text
+            questionText.innerHTML = "I knew you loved me! <br> <span class='big-heart'>❤️</span>";
+            
+            // 2. Hide Buttons
+            document.querySelector('.btn-group').style.display = 'none';
+
+            // 3. Make Background Lovely
+            body.classList.add('lovely');
+
+            // 4. Create falling hearts effect
+            createHearts();
+        });
+
+        // Function to generate floating hearts
+        function createHearts() {
+            const heartCount = 30; // Number of hearts
+            for (let i = 0; i < heartCount; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.classList.add('heart');
+                    heart.innerHTML = '❤️';
+                    heart.style.left = Math.random() * 100 + 'vw'; // Random horizontal pos
+                    heart.style.animationDuration = Math.random() * 2 + 3 + 's'; // Random speed
+                    body.appendChild(heart);
+                    
+                    // Remove heart from DOM after animation finishes to keep clean
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 5000);
+                }, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>
